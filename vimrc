@@ -59,9 +59,18 @@ set wrap
 set textwidth=79
 set formatoptions=qrn1
 "set colorcolumn=79
-"set relativenumber
+set relativenumber
 "set norelativenumber
+"set number
 
+" Turns out vim now has a hybrid line number setting. Just turn both on. OK.
+" Then. Jen had it right. See above.
+" handle setting relativenumbers
+"":au FocusLost * :set norelativenumber
+"":au FocusGained * :set relativenumber
+autocmd InsertEnter * :set norelativenumber
+""autocmd InsertLeave * :set relativenumber
+""
 " mail line wrapping
 au BufRead /tmp/mutt-* set tw=72
 
