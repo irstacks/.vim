@@ -321,6 +321,20 @@ else
   au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 endif
 
+" Let vim create parent directories on writing buffer if necessary.
+function s:MkNonExDir(file, buf)
+    if empty(getbufvar(a:buf, '&buftype')) && a:file!~#'\v^\w+\:\/'
+        let dir=fnamemodify(a:file, ':h')
+        if !isdirectory(dir)
+            call mkdir(dir, 'p')
+        endif
+    endif
+endfunction
+augroup BWCCreateDir
+    autocmd!
+    autocmd BufWritePre * :call s:MkNonExDir(expand('<afile>'), +expand('<abuf>'))
+augroup END
+
 " ----------------------------------------- "
 " File Type settings 			    		"
 " ----------------------------------------- "
@@ -476,11 +490,12 @@ augroup go
 augroup END
 
 " ==================== delimitMate ====================
-let g:delimitMate_expand_cr = 1
-let g:delimitMate_expand_space = 1
+let g:delimitMate_autoclose = 0
+let g:delimitMate_expand_cr = 0
+let g:delimitMate_expand_space = 0
 let g:delimitMate_smart_quotes = 0
 let g:delimitMate_expand_inside_quotes = 0
-let g:delimitMate_smart_matchpairs = '^\%(\w\|\$\)'
+let g:delimitMate_smart_matchpairs = 0 " '^\%(\w\|\$\)'
 
 "==================== NerdTree ====================
 " For toggling
@@ -516,6 +531,9 @@ endif
 
 " ==================== vim-mardownfmt ====================
 "let g:markdownfmt_autosave = 1
+" auto set md syntax to markdown. this should happend anyway but it doens't for
+" me...
+autocmd BufNewFile,BufRead *.md set syntax=markdown
 
 " ==================== vim-multiple-cursors ====================
 let g:multi_cursor_use_default_mapping=0
@@ -543,6 +561,7 @@ endfunction
 " auto strip whitespace except for file with extention blacklisted
 let blacklist = ['markdown', 'md']
 autocmd BufWritePre * StripWhitespace
+
 
 " ================= clang-format ==================
 
